@@ -2,9 +2,18 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bíblia Viva Kids: O Desafio de 7 Dias</title>
     
+    <!-- Configurações PWA (Modo App Nativo) -->
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Bíblia Kids">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3304/3304562.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name":"Bíblia Viva Kids","short_name":"Bíblia Kids","start_url":".","display":"standalone","background_color":"#fdfbf7","theme_color":"#1e3a8a","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3304/3304562.png","sizes":"512x512","type":"image/png"}]}'>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -76,7 +85,8 @@
             BookOpen, Star, CheckCircle, ArrowRight, Shield, Heart, 
             Award, Sparkles, ChevronLeft, Play, Ship, Fish, Users, 
             TreePine, Sun, Moon, CloudRain, Navigation, ArrowLeft,
-            Cross, Crown, Map, Lightbulb, Target, MessageCircle, FileText
+            Cross, Crown, Map, Lightbulb, Target, MessageCircle, FileText,
+            Download, X, Share, PlusSquare, CornerRightDown
         } from 'lucide-react';
 
         // --- DADOS DAS HISTÓRIAS (Agora com Perguntas para os Pais) ---
@@ -318,6 +328,9 @@
             const [selectedAnswer, setSelectedAnswer] = useState(null);
             const [isAnswerCorrect, setIsAnswerCorrect] = useState(null);
 
+            // Estado do Popup de Instalação
+            const [showInstallPopup, setShowInstallPopup] = useState(false);
+
             // --- LÓGICA ---
             const saveProgress = (newDay) => {
                 if (newDay > 7) newDay = 7;
@@ -420,6 +433,19 @@
                         {unlockedDays > 1 ? "Continuar Aventura" : "Começar Aventura"} 
                         <Play size={28} className="fill-current group-hover:scale-110 transition-transform" />
                     </button>
+
+                    <button 
+                        onClick={() => setShowInstallPopup(true)}
+                        className="mt-6 w-full bg-white border-2 border-parchment-200 text-slate-600 font-bold py-3 px-6 rounded-xl shadow-sm hover:bg-parchment-100 transition-all active:scale-95 flex items-center justify-center gap-2 relative z-10"
+                    >
+                        <Download size={20} /> Instalar App (Tela Cheia)
+                    </button>
+
+                    <div className="mt-6 flex justify-center space-x-2 relative z-10">
+                       <div className="w-2 h-2 rounded-full bg-parchment-300"></div>
+                       <div className="w-4 h-2 rounded-full bg-earth-400"></div>
+                       <div className="w-2 h-2 rounded-full bg-parchment-300"></div>
+                    </div>
                 </div>
             );
 
@@ -810,6 +836,46 @@
                     {currentView === 'story' && <StoryView />}
                     {currentView === 'quiz' && <QuizView />}
                     {currentView === 'success' && <SuccessView />}
+
+                    {/* POPUP DE INSTALAÇÃO */}
+                    {showInstallPopup && (
+                        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
+                            <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 relative shadow-2xl animate-slide-up">
+                                <button
+                                    onClick={() => setShowInstallPopup(false)}
+                                    className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 bg-slate-100 rounded-full p-1 transition-colors"
+                                >
+                                    <X size={24} />
+                                </button>
+
+                                <div className="flex justify-center mb-4 mt-2">
+                                    <div className="w-16 h-16 bg-biblicalBlue rounded-2xl flex items-center justify-center text-white shadow-lg border-4 border-yellow-400">
+                                        <BookOpen size={32} />
+                                    </div>
+                                </div>
+
+                                <h3 className="text-xl font-black text-slate-800 text-center mb-2 font-serif">Instale o App</h3>
+                                <p className="text-slate-600 text-sm text-center mb-6 font-medium">
+                                    Jogue em tela cheia e acesse direto da tela inicial do seu celular, como um aplicativo de verdade!
+                                </p>
+
+                                <div className="space-y-4 text-slate-700 text-sm font-bold bg-parchment-50 p-5 rounded-2xl border border-parchment-200">
+                                    <p className="flex items-center gap-3">
+                                        <span className="bg-white border border-slate-200 w-8 h-8 flex items-center justify-center rounded-full text-biblicalBlue shrink-0 shadow-sm"><Share size={16} /></span>
+                                        <span>1. Toque em <strong>Compartilhar</strong> (ou nos 3 pontinhos) no navegador.</span>
+                                    </p>
+                                    <p className="flex items-center gap-3">
+                                        <span className="bg-white border border-slate-200 w-8 h-8 flex items-center justify-center rounded-full text-earth-500 shrink-0 shadow-sm"><PlusSquare size={16} /></span>
+                                        <span>2. Escolha <strong>"Adicionar à Tela de Início"</strong>.</span>
+                                    </p>
+                                </div>
+
+                                <div className="mt-6 flex justify-end pr-8">
+                                    <CornerRightDown size={40} className="text-slate-400 animate-bounce" />
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             );
         }
