@@ -274,7 +274,7 @@
                 questions: [
                     { q: "O que o menino tinha em seu lanche?", options: ["10 pães e 5 maçãs", "5 pães e 2 peixinhos", "Apenas uma garrafa de água"], correct: 1 },
                     { q: "O que aconteceu quando Jesus orou agradecendo pela comida?", options: ["A comida desapareceu", "A comida multiplicou e alimentou a todos", "Faltou comida para algumas crianças"], correct: 1 },
-                    { q: "O que aprendemos sobre generosidade com esse menino?", options: ["Que o pouco na mão de Jesus vira muito", "Que devemos guardar tudo só para nós", "Que não vale a pena dividir nossas coisas"], correct: 0 }
+                    { q: "O window aprendemos sobre generosidade com esse menino?", options: ["Que o pouco na mão de Jesus vira muito", "Que devemos guardar tudo só para nós", "Que não vale a pena dividir nossas coisas"], correct: 0 }
                 ]
             },
             {
@@ -328,8 +328,16 @@
             const [selectedAnswer, setSelectedAnswer] = useState(null);
             const [isAnswerCorrect, setIsAnswerCorrect] = useState(null);
 
-            // Estado do Popup de Instalação
+            // Estado do Popup de Instalação e verificação se já é PWA
             const [showInstallPopup, setShowInstallPopup] = useState(false);
+            const [isStandalone, setIsStandalone] = useState(false);
+
+            useEffect(() => {
+                // Verifica se o app já está rodando em tela cheia (como PWA instalado)
+                if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+                    setIsStandalone(true);
+                }
+            }, []);
 
             // --- LÓGICA ---
             const saveProgress = (newDay) => {
@@ -434,12 +442,15 @@
                         <Play size={28} className="fill-current group-hover:scale-110 transition-transform" />
                     </button>
 
-                    <button 
-                        onClick={() => setShowInstallPopup(true)}
-                        className="mt-6 w-full bg-white border-2 border-parchment-200 text-slate-600 font-bold py-3 px-6 rounded-xl shadow-sm hover:bg-parchment-100 transition-all active:scale-95 flex items-center justify-center gap-2 relative z-10"
-                    >
-                        <Download size={20} /> Instale no seu celular e acesse de qualquer lugar
-                    </button>
+                    {/* Exibe o botão de instalação apenas se não estiver rodando como PWA */}
+                    {!isStandalone && (
+                        <button 
+                            onClick={() => setShowInstallPopup(true)}
+                            className="mt-6 w-full bg-white border-2 border-parchment-200 text-slate-600 font-bold py-3 px-6 rounded-xl shadow-sm hover:bg-parchment-100 transition-all active:scale-95 flex items-center justify-center gap-2 relative z-10"
+                        >
+                            <Download size={20} /> Instale no seu celular e acesse de qualquer lugar
+                        </button>
+                    )}
 
                     <div className="mt-6 flex justify-center space-x-2 relative z-10">
                        <div className="w-2 h-2 rounded-full bg-parchment-300"></div>
