@@ -354,28 +354,45 @@
             // --- COMPONENTES VISUAIS ---
 
             const StartView = () => (
-                <div className="animate-fade-in w-full max-w-md mx-auto bg-parchment-50 rounded-2xl shadow-xl overflow-hidden border border-parchment-200 min-h-[600px] flex flex-col items-center justify-center p-8 text-center relative">
-                    <div className="absolute top-0 left-0 w-full h-40 bg-biblicalBlue rounded-b-[40%] shadow-inner"></div>
+                <div className="animate-fade-in w-full max-w-md mx-auto bg-parchment-50 rounded-2xl shadow-xl overflow-hidden border border-parchment-200 min-h-[600px] flex flex-col items-center justify-center p-8 text-center relative z-0">
                     
-                    <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center text-biblicalBlue mb-6 shadow-xl border-4 border-earth-500 relative z-10 animate-bounce-slight">
-                        <BookOpen size={64} />
+                    {/* Fundo Lúdico e Elementos Flutuantes */}
+                    <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-b from-blue-400 to-biblicalBlue rounded-b-[50%] shadow-md -z-10"></div>
+                    <Star className="absolute top-8 left-8 text-yellow-300 animate-bounce-slight opacity-80 z-0" size={28} fill="currentColor" />
+                    <Sparkles className="absolute top-16 right-8 text-yellow-100 animate-pulse opacity-90 z-0" size={32} />
+                    <Star className="absolute top-36 left-12 text-blue-200 animate-pulse opacity-60 z-0" size={16} fill="currentColor" />
+                    
+                    {/* Ícone Mágico Principal */}
+                    <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center text-biblicalBlue mb-6 shadow-[0_0_20px_rgba(255,255,255,0.5)] border-4 border-yellow-400 relative z-10 animate-bounce-slight">
+                        <BookOpen size={56} className="text-biblicalBlue" />
+                        <Sparkles size={24} className="absolute -top-2 -right-2 text-yellow-400" fill="currentColor" />
                     </div>
 
-                    <h1 className="text-4xl font-black font-serif text-slate-800 mb-2 relative z-10 leading-tight">Bíblia Viva<br/><span className="text-earth-600">Kids</span></h1>
-                    <p className="text-biblicalBlue font-bold tracking-widest uppercase text-sm mb-8 relative z-10">
+                    <h1 className="text-5xl font-black font-serif text-slate-800 mb-1 relative z-10 leading-tight drop-shadow-sm">
+                        Bíblia Viva<br/><span className="text-earth-500">Kids</span>
+                    </h1>
+                    
+                    <div className="bg-yellow-100 text-earth-700 font-bold tracking-widest uppercase text-xs px-4 py-1.5 rounded-full mb-8 relative z-10 shadow-sm border border-yellow-200">
                         O Desafio de 7 Dias
-                    </p>
+                    </div>
 
-                    <div className="bg-white border-2 border-parchment-200 p-5 rounded-xl w-full mb-10 relative z-10 shadow-sm text-slate-600 font-medium leading-relaxed">
-                        Prepare-se para uma jornada incrível! Em apenas 15 minutos por dia, você e seu filho viverão as maiores aventuras da Bíblia.
+                    <div className="bg-white border-4 border-dashed border-parchment-300 p-5 rounded-2xl w-full mb-8 relative z-10 shadow-sm text-slate-600 font-medium leading-relaxed text-lg">
+                        Prepare-se para uma jornada incrível! ✨ Em apenas 15 minutos por dia, você e seu filho viverão as maiores aventuras da Bíblia.
                     </div>
 
                     <button 
                         onClick={() => setCurrentView('map')}
-                        className="w-full bg-earth-600 text-white font-bold py-4 px-6 rounded-xl shadow-[0_0_15px_rgba(217,119,6,0.4)] hover:bg-earth-500 hover:shadow-[0_0_20px_rgba(217,119,6,0.6)] transition-all active:scale-95 flex items-center justify-center gap-3 relative z-10 text-xl"
+                        className="w-full bg-earth-500 text-white font-black py-4 px-6 rounded-2xl shadow-lg border-b-4 border-earth-700 hover:bg-earth-400 hover:border-earth-600 hover:-translate-y-1 transition-all active:border-b-0 active:translate-y-1 flex items-center justify-center gap-3 relative z-10 text-xl group"
                     >
-                        {unlockedDays > 1 ? "Continuar Aventura" : "Começar Aventura"} <Play size={24} className="fill-current" />
+                        {unlockedDays > 1 ? "Continuar Aventura" : "Começar Aventura"} 
+                        <Play size={28} className="fill-current group-hover:scale-110 transition-transform" />
                     </button>
+
+                    <div className="mt-4 flex justify-center space-x-2 relative z-10">
+                       <div className="w-2 h-2 rounded-full bg-parchment-300"></div>
+                       <div className="w-4 h-2 rounded-full bg-earth-400"></div>
+                       <div className="w-2 h-2 rounded-full bg-parchment-300"></div>
+                    </div>
                 </div>
             );
 
