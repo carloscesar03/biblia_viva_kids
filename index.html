@@ -76,13 +76,18 @@
             BookOpen, Star, CheckCircle, ArrowRight, Shield, Heart, 
             Award, Sparkles, ChevronLeft, Play, Ship, Fish, Users, 
             TreePine, Sun, Moon, CloudRain, Navigation, ArrowLeft,
-            Cross, Crown, Map, Lightbulb
+            Cross, Crown, Map, Lightbulb, Target, MessageCircle, FileText
         } from 'lucide-react';
 
-        // --- DADOS DAS HISTÓRIAS (Com 4 páginas, 3 perguntas e IMAGENS REAIS) ---
+        // --- DADOS DAS HISTÓRIAS (Agora com Perguntas para os Pais) ---
         const DAYS_DATA = [
             {
                 id: 1, title: "Davi e o Gigante", theme: "Coragem", icon: Shield,
+                mission: "Enfrente algo que você tem medo hoje (como dormir no escuro ou tentar uma comida nova) lembrando que Deus te faz forte!",
+                parentsGuide: [
+                    "O que parece ser um 'gigante' ou um problema muito grande para você hoje, seja na escola ou em casa?",
+                    "Como você acha que Deus nos dá coragem quando estamos com medo?"
+                ],
                 pages: [
                     {
                         text: "Davi era um jovem pastor de ovelhas. Enquanto seus irmãos mais velhos eram soldados do rei, ele passava os dias no campo, tocando sua harpa e cuidando do rebanho, sempre confiando que Deus estava com ele.",
@@ -109,6 +114,11 @@
             },
             {
                 id: 2, title: "Daniel e os Leões", theme: "Fidelidade", icon: Heart,
+                mission: "Faça uma oração especial antes de dormir hoje, agradecendo a Deus pela sua família, assim como Daniel orava todos os dias.",
+                parentsGuide: [
+                    "Você já teve vergonha de fazer o que era certo só porque os seus amigos estavam fazendo o errado?",
+                    "Por que é importante tirarmos um tempinho para falar com Deus todos os dias?"
+                ],
                 pages: [
                     {
                         text: "Daniel era um homem muito sábio e fiel. Todos os dias, sem falta, ele ia para seu quarto, abria a janela em direção a Jerusalém e orava a Deus três vezes. Ele amava o Senhor mais do que qualquer coisa.",
@@ -135,6 +145,11 @@
             },
             {
                 id: 3, title: "A Arca de Noé", theme: "Obediência", icon: Ship,
+                mission: "Hoje, o seu desafio é obedecer à mamãe ou ao papai logo na primeira vez que eles pedirem algo, sem reclamar, igualzinho a Noé!",
+                parentsGuide: [
+                    "O que você acha mais difícil na hora de obedecer aos seus pais de primeira?",
+                    "De que maneira a obediência a Deus e aos pais nos protege do perigo?"
+                ],
                 pages: [
                     {
                         text: "Há muito tempo, as pessoas na Terra esqueceram de Deus e faziam muitas coisas ruins. Mas havia um homem bom chamado Noé. Deus falou com Noé e pediu que ele construísse um barco gigante, chamado Arca, porque uma grande chuva viria.",
@@ -161,6 +176,11 @@
             },
             {
                 id: 4, title: "Jonas e o Grande Peixe", theme: "Segunda Chance", icon: Fish,
+                mission: "Se você fez algo errado recentemente, tenha coragem para pedir desculpas. Deus sempre nos dá uma nova chance quando nos arrependemos!",
+                parentsGuide: [
+                    "Como o nosso coração se sente quando fazemos algo errado e tentamos esconder?",
+                    "Por que é tão maravilhoso saber que Deus sempre nos perdoa quando pedimos desculpas de verdade?"
+                ],
                 pages: [
                     {
                         text: "Deus deu uma missão a Jonas: ir até a cidade de Nínive e avisar as pessoas para pararem de fazer coisas ruins. Mas Jonas ficou com medo e tentou fugir de Deus. Ele entrou num navio que ia para a direção contrária!",
@@ -187,6 +207,11 @@
             },
             {
                 id: 5, title: "O Bom Samaritano", theme: "Amor ao Próximo", icon: Users,
+                mission: "Ajude a mamãe, o papai ou um amiguinho em uma tarefa hoje (como arrumar os brinquedos) sem que eles precisem te pedir.",
+                parentsGuide: [
+                    "Quem você acha que precisa da nossa ajuda hoje? (Pode ser um amigo, um familiar ou alguém na rua)",
+                    "O que podemos fazer de prático esta semana para mostrar o amor de Jesus a uma pessoa que não conhecemos bem?"
+                ],
                 pages: [
                     {
                         text: "Jesus contou uma história sobre um homem que viajava por uma estrada perigosa. No caminho, assaltantes o machucaram muito e o deixaram caído no chão. Ele precisava muito de ajuda.",
@@ -213,6 +238,11 @@
             },
             {
                 id: 6, title: "A Multiplicação", theme: "Generosidade", icon: Award,
+                mission: "Divida algo seu com alguém hoje! Pode ser um lanche, emprestar um brinquedo especial ou dar um abraço bem apertado.",
+                parentsGuide: [
+                    "O que você tem nas suas mãos hoje (um talento, um brinquedo, um lanche) que poderia dividir para fazer alguém sorrir?",
+                    "Você sabia que quando entregamos a Deus o pouco que temos, Ele transforma em muito? Como isso te faz sentir?"
+                ],
                 pages: [
                     {
                         text: "Uma multidão gigante de mais de cinco mil pessoas seguiu Jesus até um lugar deserto para ouvir seus ensinamentos e ser curada. Ficou tarde e todos estavam com muita fome, mas não havia lugar para comprar comida ali.",
@@ -239,6 +269,11 @@
             },
             {
                 id: 7, title: "Zaqueu na Árvore", theme: "Transformação", icon: TreePine,
+                mission: "Faça uma ação de bondade surpresa para alguém da sua casa hoje, mostrando que o amor de Jesus mora no seu coração!",
+                parentsGuide: [
+                    "O que significa, de verdade, 'deixar Jesus entrar na nossa casa e no nosso coração'?",
+                    "Como as outras pessoas conseguem perceber que o coração de alguém foi transformado por Jesus?"
+                ],
                 pages: [
                     {
                         text: "Zaqueu era um cobrador de impostos muito rico, mas que costumava pegar mais dinheiro das pessoas do que era justo. Por isso, ninguém da cidade gostava dele. Um dia, Jesus visitou a cidade de Jericó e uma multidão se juntou para vê-lo.",
@@ -272,7 +307,7 @@
                 return saved ? parseInt(saved) : 1;
             });
             
-            const [currentView, setCurrentView] = useState('start'); // 'start', 'map', 'story', 'quiz', 'success'
+            const [currentView, setCurrentView] = useState('start'); // 'start', 'map', 'story', 'quiz', 'success', 'parentsGuide'
             const [activeDayIndex, setActiveDayIndex] = useState(0);
             
             // Estado de Paginação da História
@@ -291,11 +326,10 @@
             };
 
             const startDay = (index) => {
-                // Impede clique em dias não destravados
                 if (index + 1 > unlockedDays) return; 
 
                 setActiveDayIndex(index);
-                setCurrentStoryPage(0); // Reseta para a primeira página da história
+                setCurrentStoryPage(0); 
                 setCurrentView('story');
             };
 
@@ -344,7 +378,6 @@
             };
 
             const handleDayComplete = () => {
-                // Se completou o dia atual e o próximo ainda não tá liberado, destrava o próximo.
                 if (activeDayIndex + 1 === unlockedDays && unlockedDays < 7) {
                     saveProgress(unlockedDays + 1);
                 }
@@ -387,18 +420,12 @@
                         {unlockedDays > 1 ? "Continuar Aventura" : "Começar Aventura"} 
                         <Play size={28} className="fill-current group-hover:scale-110 transition-transform" />
                     </button>
-
-                    <div className="mt-4 flex justify-center space-x-2 relative z-10">
-                       <div className="w-2 h-2 rounded-full bg-parchment-300"></div>
-                       <div className="w-4 h-2 rounded-full bg-earth-400"></div>
-                       <div className="w-2 h-2 rounded-full bg-parchment-300"></div>
-                    </div>
                 </div>
             );
 
             const MapView = () => (
-                <div className="animate-fade-in w-full max-w-md mx-auto bg-parchment-50 rounded-2xl shadow-xl overflow-hidden border border-parchment-200">
-                    <div className="bg-biblicalBlue p-8 text-center text-white relative overflow-hidden border-b-4 border-earth-500">
+                <div className="animate-fade-in w-full max-w-md mx-auto bg-parchment-50 rounded-2xl shadow-xl overflow-hidden border border-parchment-200 flex flex-col relative min-h-[600px]">
+                    <div className="bg-biblicalBlue p-8 text-center text-white relative overflow-hidden border-b-4 border-earth-500 shrink-0">
                         <div className="absolute top-0 right-0 opacity-10 transform translate-x-4 -translate-y-4">
                             <BookOpen size={120} />
                         </div>
@@ -406,8 +433,8 @@
                         <p className="text-blue-200 text-sm font-medium relative z-10 uppercase tracking-widest">O Desafio de 7 Dias</p>
                     </div>
 
-                    <div className="p-6 relative">
-                        <div className="absolute left-10 top-10 bottom-10 w-1 bg-parchment-200 rounded"></div>
+                    <div className="p-6 relative flex-grow pb-24">
+                        <div className="absolute left-10 top-10 bottom-24 w-1 bg-parchment-200 rounded"></div>
 
                         <div className="space-y-6 relative z-10">
                             {DAYS_DATA.map((day, index) => {
@@ -451,6 +478,62 @@
                             })}
                         </div>
                     </div>
+
+                    {/* Botão Flutuante do Guia dos Pais */}
+                    <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-parchment-100 via-parchment-50/90 to-transparent">
+                        <button 
+                            onClick={() => setCurrentView('parentsGuide')}
+                            className="w-full bg-white border-2 border-biblicalBlue text-biblicalBlue font-bold py-3 px-4 rounded-xl shadow-md hover:bg-blue-50 transition-all active:scale-95 flex items-center justify-center gap-2"
+                        >
+                            <MessageCircle size={20} />
+                            Área dos Pais (Guia de Conversas)
+                        </button>
+                    </div>
+                </div>
+            );
+
+            // --- NOVA TELA: GUIA DOS PAIS ---
+            const ParentsGuideView = () => (
+                <div className="animate-slide-up w-full max-w-md mx-auto bg-parchment-50 rounded-2xl shadow-xl overflow-hidden border border-parchment-200 flex flex-col min-h-[600px] h-full">
+                    <div className="p-4 border-b border-parchment-200 flex items-center bg-white sticky top-0 z-20">
+                        <button onClick={() => setCurrentView('map')} className="text-slate-400 hover:text-biblicalBlue transition-colors p-2">
+                            <ChevronLeft size={28} />
+                        </button>
+                        <span className="font-bold text-biblicalBlue text-lg ml-2 font-serif">Guia para os Pais</span>
+                    </div>
+
+                    <div className="p-6 overflow-y-auto">
+                        <div className="bg-blue-50 border-l-4 border-biblicalBlue p-4 rounded-r-xl mb-6 text-sm text-slate-700">
+                            <strong>Como usar:</strong> Utilize estas perguntas após a história ou na hora das refeições para gerar um diálogo profundo e fixar os valores bíblicos no coração do seu filho.
+                        </div>
+
+                        <div className="space-y-6">
+                            {DAYS_DATA.map((day, idx) => {
+                                const isUnlocked = (idx + 1) <= unlockedDays;
+                                
+                                if (!isUnlocked) return null; // Só mostra os dias liberados
+
+                                return (
+                                    <div key={day.id} className="bg-white border border-parchment-200 rounded-xl p-5 shadow-sm">
+                                        <div className="flex items-center gap-3 mb-3 border-b border-parchment-100 pb-2">
+                                            <div className="w-8 h-8 rounded-full bg-earth-100 text-earth-700 flex items-center justify-center font-bold text-sm">
+                                                {day.id}
+                                            </div>
+                                            <h3 className="font-bold text-slate-800 font-serif">{day.title}</h3>
+                                        </div>
+                                        <ul className="space-y-3">
+                                            {day.parentsGuide.map((question, qIdx) => (
+                                                <li key={qIdx} className="flex items-start gap-2 text-slate-700 text-sm">
+                                                    <MessageCircle size={16} className="text-earth-500 shrink-0 mt-0.5" />
+                                                    <span>{question}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
                 </div>
             );
 
@@ -463,7 +546,6 @@
                 return (
                     <div key={`page-${currentStoryPage}`} className="w-full max-w-md mx-auto bg-parchment-50 rounded-2xl shadow-xl overflow-hidden border border-parchment-200 flex flex-col min-h-[600px]">
                         
-                        {/* Header da História */}
                         <div className="p-4 border-b border-parchment-200 flex items-center justify-between bg-white">
                             <button onClick={prevPage} className="text-slate-400 hover:text-earth-600 transition-colors p-2">
                                 <ChevronLeft size={24} />
@@ -476,10 +558,8 @@
                             <span className="text-xs font-bold text-parchment-800 bg-parchment-200 px-2 py-1 rounded">Dia {day.id}</span>
                         </div>
 
-                        {/* Conteúdo da Página */}
                         <div className="flex-grow flex flex-col p-6 animate-slide-up">
                             
-                            {/* Ilustração (Imagem Real ou Vetorial) */}
                             {pageData.imageUrl ? (
                                 <div className="w-full mb-6 rounded-2xl overflow-hidden shadow-md border border-parchment-200">
                                     <img 
@@ -518,7 +598,6 @@
                             </div>
                         </div>
 
-                        {/* Controles Inferiores */}
                         <div className="p-6 pt-0 mt-auto">
                             <button 
                                 onClick={nextPage}
@@ -597,13 +676,18 @@
             };
 
             const SuccessView = () => {
-                const isFinalDay = activeDayIndex === 6; // Dia 7 completado
+                const dayData = DAYS_DATA[activeDayIndex];
+                const isFinalDay = activeDayIndex === 6; 
                 
+                // Estados para o Certificado
+                const [childName, setChildName] = useState("");
+                const [showCertificate, setShowCertificate] = useState(false);
+
                 return (
                     <div className="animate-fade-in w-full max-w-md mx-auto bg-parchment-50 rounded-2xl shadow-xl overflow-hidden border border-parchment-200 min-h-[500px] flex flex-col items-center justify-center p-8 text-center relative">
                         
                         {isFinalDay ? (
-                            // CONTEÚDO FINAL (DIA 7)
+                            // CONTEÚDO FINAL (DIA 7) COM CERTIFICADO
                             <div className="w-full flex flex-col items-center">
                                 <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                                     <div className="absolute top-10 left-10 text-earth-400 animate-bounce"><Star size={32} fill="currentColor"/></div>
@@ -611,32 +695,78 @@
                                     <div className="absolute bottom-40 left-20 text-earth-300 animate-bounce" style={{animationDelay: '0.6s'}}><Star size={20} fill="currentColor"/></div>
                                 </div>
 
-                                <div className="w-28 h-28 bg-gradient-to-br from-yellow-300 to-earth-500 rounded-full flex items-center justify-center text-white mb-6 shadow-xl relative z-10 border-4 border-white">
-                                    <Crown size={56} />
-                                </div>
+                                {!showCertificate ? (
+                                    // ETAPA 1: PEDIR O NOME
+                                    <div className="animate-slide-up w-full relative z-10 flex flex-col items-center">
+                                        <div className="w-28 h-28 bg-gradient-to-br from-yellow-300 to-earth-500 rounded-full flex items-center justify-center text-white mb-6 shadow-xl border-4 border-white">
+                                            <Crown size={56} />
+                                        </div>
 
-                                <h2 className="text-3xl font-black font-serif text-slate-800 mb-2 relative z-10">Jornada Concluída!</h2>
-                                <p className="text-slate-600 mb-6 relative z-10 font-medium">
-                                    Que incrível! Vocês finalizaram os 7 Dias construindo raízes fortes na fé.
-                                </p>
+                                        <h2 className="text-3xl font-black font-serif text-slate-800 mb-2">Jornada Concluída!</h2>
+                                        <p className="text-slate-600 mb-8 font-medium">
+                                            Vocês finalizaram os 7 Dias construindo raízes fortes na fé. É hora da recompensa!
+                                        </p>
 
-                                <div className="bg-white border-2 border-earth-200 p-5 rounded-xl w-full mb-8 relative z-10 shadow-sm">
-                                    <p className="text-earth-700 italic font-serif">"Ensina a criança no caminho em que deve andar, e ainda quando for velho, não se desviará dele." <br/><span className="text-sm font-bold block mt-2">- Provérbios 22:6</span></p>
-                                </div>
+                                        <div className="w-full bg-white p-6 rounded-2xl border-2 border-earth-200 shadow-md">
+                                            <label className="block text-sm font-bold text-earth-700 mb-3 uppercase tracking-wide">
+                                                Nome do Herói(ína) da Fé:
+                                            </label>
+                                            <input 
+                                                type="text" 
+                                                value={childName}
+                                                onChange={(e) => setChildName(e.target.value)}
+                                                placeholder="Ex: João Miguel"
+                                                className="w-full text-center text-xl font-bold p-3 border-b-2 border-parchment-300 focus:outline-none focus:border-earth-500 mb-6 bg-parchment-50 rounded-t-md"
+                                                maxLength={25}
+                                            />
+                                            <button 
+                                                onClick={() => { if(childName.trim().length > 1) setShowCertificate(true) }}
+                                                className={`w-full font-black py-4 px-6 rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 ${childName.trim().length > 1 ? 'bg-earth-600 hover:bg-earth-500 text-white' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
+                                            >
+                                                <FileText size={20} /> Gerar Certificado
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    // ETAPA 2: EXIBIR O CERTIFICADO
+                                    <div className="animate-fade-in w-full relative z-10 flex flex-col items-center mt-4">
+                                        
+                                        <div className="w-full bg-white p-2 shadow-2xl rounded">
+                                            <div className="w-full border-double border-4 border-earth-400 p-6 flex flex-col items-center bg-parchment-50 relative overflow-hidden">
+                                                <div className="absolute opacity-5"><BookOpen size={200}/></div>
+                                                
+                                                <Award size={48} className="text-earth-600 mb-2 relative z-10" />
+                                                <h3 className="text-earth-700 font-serif font-black text-2xl uppercase tracking-widest mb-4 relative z-10">Certificado</h3>
+                                                
+                                                <p className="text-xs text-slate-500 uppercase tracking-widest mb-2 relative z-10">Certificamos que</p>
+                                                <h2 className="text-3xl text-biblicalBlue font-black font-serif italic mb-4 relative z-10 border-b border-earth-300 px-4 pb-2">{childName}</h2>
+                                                
+                                                <p className="text-sm text-slate-700 font-medium relative z-10 mb-6">
+                                                    Concluiu com excelência o Desafio de 7 Dias, demonstrando grande conhecimento nas histórias e tornando-se um verdadeiro Herói da Fé.
+                                                </p>
+                                                
+                                                <div className="w-full flex justify-between items-end mt-4 relative z-10">
+                                                    <div className="text-left w-1/2">
+                                                        <div className="border-b border-slate-400 mb-1 w-24"></div>
+                                                        <p className="text-[10px] text-slate-500">Data de Conclusão</p>
+                                                    </div>
+                                                    <div className="text-right flex flex-col items-end">
+                                                        <div className="font-serif italic text-earth-700 font-bold text-lg mb-0 leading-none">Bíblia Viva</div>
+                                                        <p className="text-[10px] text-slate-500">Assinatura Oficial</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
-                                {/* CTA FINAL PARA NOVO PRODUTO */}
-                                <div className="w-full relative z-10 border-t border-parchment-300 pt-6 mt-2">
-                                    <h3 className="text-lg font-bold text-slate-800 mb-3">Pronto para o próximo passo?</h3>
-                                    <a 
-                                        href="#link-novo-produto" 
-                                        className="w-full bg-biblicalBlue text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:bg-blue-900 transition-all active:scale-95 flex items-center justify-center gap-2"
-                                    >
-                                        Descobrir Nova Aventura <ArrowRight size={20} />
-                                    </a>
-                                    <button onClick={() => setCurrentView('map')} className="mt-4 text-sm text-slate-500 underline hover:text-slate-700">
-                                        Voltar ao Mapa Principal
-                                    </button>
-                                </div>
+                                        <p className="text-sm font-bold text-emerald-600 mt-6 bg-emerald-50 px-4 py-2 rounded-full border border-emerald-200">
+                                            📸 Tire um print desta tela e guarde!
+                                        </p>
+
+                                        <button onClick={() => setCurrentView('map')} className="mt-8 text-sm text-slate-500 underline hover:text-slate-700 font-medium">
+                                            Voltar ao Mapa Principal
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         ) : (
                             // CONTEÚDO PADRÃO (DIAS 1 A 6)
@@ -646,9 +776,19 @@
                                 </div>
 
                                 <h2 className="text-3xl font-black font-serif text-slate-800 mb-2 relative z-10">Parabéns!</h2>
-                                <p className="text-slate-600 mb-8 relative z-10 text-lg">
-                                    Você completou o <strong>Dia {DAYS_DATA[activeDayIndex].id}</strong> e a fé aumentou!
+                                <p className="text-slate-600 mb-6 relative z-10 text-lg">
+                                    Você completou o <strong>Dia {dayData.id}</strong> e a fé aumentou!
                                 </p>
+
+                                <div className="bg-white border-2 border-earth-200 p-5 rounded-xl w-full mb-8 relative z-10 shadow-sm text-left animate-slide-up" style={{animationDelay: '0.2s'}}>
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <Target className="text-earth-500" size={24} />
+                                        <h3 className="font-bold text-lg text-slate-800 font-serif">Sua Missão de Hoje:</h3>
+                                    </div>
+                                    <p className="text-slate-700 font-medium leading-relaxed">
+                                        {dayData.mission}
+                                    </p>
+                                </div>
 
                                 <button 
                                     onClick={() => setCurrentView('map')}
@@ -663,9 +803,10 @@
             };
 
             return (
-                <div className="w-full max-w-md">
+                <div className="w-full max-w-md mx-auto">
                     {currentView === 'start' && <StartView />}
                     {currentView === 'map' && <MapView />}
+                    {currentView === 'parentsGuide' && <ParentsGuideView />}
                     {currentView === 'story' && <StoryView />}
                     {currentView === 'quiz' && <QuizView />}
                     {currentView === 'success' && <SuccessView />}
