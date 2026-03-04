@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bíblia Viva Kids: O Desafio de 7 Dias</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        parchment: {
+                            50: '#fdfbf7',
+                            100: '#f6f0e4',
+                            200: '#efe4d1',
+                            300: '#e5d1b3',
+                            800: '#7c5a2b',
+                            900: '#5c4018'
+                        },
+                        earth: {
+                            500: '#d97706', // amber-600
+                            600: '#b45309', // amber-700
+                        },
+                        biblicalBlue: '#1e3a8a',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-out forwards',
+                        'slide-up': 'slideUp 0.5s ease-out forwards',
+                        'bounce-slight': 'bounceSlight 2s infinite ease-in-out'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        bounceSlight: {
+                            '0%, 100%': { transform: 'translateY(-2%)' },
+                            '50%': { transform: 'translateY(0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Import Map para React e Lucide -->
+    <script type="importmap">
+        {
+            "imports": {
+                "react": "https://esm.sh/react@18.2.0",
+                "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+                "lucide-react": "https://esm.sh/lucide-react@0.292.0"
+            }
+        }
+    </script>
+    
+    <!-- Babel para compilar JSX no navegador -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-parchment-100 font-sans antialiased m-0 p-0 text-slate-800">
+    
+    <!-- Container Principal do App -->
+    <div id="root" class="w-full h-auto min-h-screen flex justify-center py-6 px-4"></div>
+
+    <script type="text/babel" data-type="module">
+        import React, { useState, useEffect } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { 
+            BookOpen, Star, CheckCircle, ArrowRight, Shield, Heart, 
+            Award, Sparkles, ChevronLeft, Play, Ship, Fish, Users, 
+            TreePine, Sun, Moon, CloudRain, Navigation, ArrowLeft,
+            Cross, Crown, Map, Lightbulb
+        } from 'lucide-react';
+
+        // --- DADOS DAS HISTÓRIAS (Agora com 4 páginas, 3 perguntas e IMAGENS REAIS) ---
+        const DAYS_DATA = [
+            {
+                id: 1, title: "Davi e o Gigante", theme: "Coragem", icon: Shield,
+                pages: [
+                    {
+                        text: "Davi era um jovem pastor de ovelhas. Enquanto seus irmãos mais velhos eram soldados do rei, ele passava os dias no campo, tocando sua harpa e cuidando do rebanho, sempre confiando que Deus estava com ele.",
+                        imageUrl: "https://i.postimg.cc/4djSqQbP/cena_01.webp", imageIcon: Sun, bgGradient: "from-amber-200 to-orange-300", illustrationTitle: "O Jovem Pastor"
+                    },
+                    {
+                        text: "Um dia, Davi foi levar comida para seus irmãos no acampamento militar. Lá, ele viu um gigante assustador chamado Golias. Todos os soldados de Israel tremiam de medo, mas Davi não. Ele sabia que o Deus de Israel era infinitamente maior que qualquer gigante.",
+                        imageUrl: "https://i.postimg.cc/W3xHCw65/cena_02.webp", imageIcon: Shield, bgGradient: "from-slate-400 to-slate-600", illustrationTitle: "O Desafio do Gigante"
+                    },
+                    {
+                        text: "Recusando armaduras pesadas, Davi pegou apenas sua funda e cinco pedras lisas do riacho. Com uma única pedra e muita fé, ele derrubou o gigante. Deus deu a vitória a Davi, mostrando que a verdadeira força vem do Senhor!",
+                        imageUrl: "https://i.postimg.cc/HxFhR94S/cena_03.webp", imageIcon: Star, bgGradient: "from-emerald-300 to-teal-500", illustrationTitle: "A Grande Vitória"
+                    },
+                    {
+                        text: "O QUE APRENDEMOS? Não importa o tamanho do nosso problema ou do 'gigante' que enfrentamos. Se confiarmos no Senhor de todo o coração e formos corajosos, Ele nos dará a força necessária para vencer qualquer desafio!",
+                        imageIcon: Lightbulb, bgGradient: "from-yellow-300 to-amber-500", illustrationTitle: "A Lição de Hoje"
+                    }
+                ],
+                questions: [
+                    { q: "O que Davi usou para vencer o gigante?", options: ["Uma espada de ouro", "Uma pedrinha e uma funda", "Um escudo enorme"], correct: 1 },
+                    { q: "Por que Davi não teve medo do gigante?", options: ["Porque ele confiava em Deus", "Porque ele era musculoso", "Porque ele estava escondido"], correct: 0 },
+                    { q: "O que a história de Davi nos ensina sobre os nossos problemas?", options: ["Que devemos fugir e chorar", "Que devemos resolver tudo sozinhos", "Que com a ajuda de Deus, podemos vencer grandes problemas"], correct: 2 }
+                ]
+            },
+            {
+                id: 2, title: "Daniel e os Leões", theme: "Fidelidade", icon: Heart,
+                pages: [
+                    {
+                        text: "Daniel era um homem muito sábio e fiel. Todos os dias, sem falta, ele ia para seu quarto, abria a janela em direção a Jerusalém e orava a Deus três vezes. Ele amava o Senhor mais do que qualquer coisa.",
+                        imageUrl: "https://i.postimg.cc/RFm3Rj2R/cena_01_2.webp", imageIcon: BookOpen, bgGradient: "from-blue-300 to-indigo-400", illustrationTitle: "A Oração Diária"
+                    },
+                    {
+                        text: "Alguns homens maus, com inveja de Daniel, enganaram o rei para criar uma lei: 'Ninguém pode orar a nenhum deus, apenas ao rei'. Mas Daniel não parou. Ele continuou orando a Deus, e por isso, foi jogado em uma cova escura cheia de leões famintos.",
+                        imageUrl: "https://i.postimg.cc/G2RBQZ6K/cena_02_2.webp", imageIcon: Moon, bgGradient: "from-indigo-800 to-slate-900", illustrationTitle: "A Cova Escura"
+                    },
+                    {
+                        text: "O rei passou a noite sem dormir, preocupado. De manhã, correu até a cova e chamou por Daniel. Para sua surpresa, Daniel respondeu são e salvo! Deus havia enviado um anjo para fechar a boca dos leões porque Daniel foi fiel.",
+                        imageUrl: "https://i.postimg.cc/nzxsk6N1/cena_03_2.webp", imageIcon: Sparkles, bgGradient: "from-yellow-300 to-amber-500", illustrationTitle: "O Livramento"
+                    },
+                    {
+                        text: "O QUE APRENDEMOS? A fidelidade a Deus deve ser nossa maior prioridade, mesmo quando for difícil ou as outras pessoas não concordarem. Deus sempre protege, abençoa e honra aqueles que são fiéis e oram a Ele!",
+                        imageIcon: Lightbulb, bgGradient: "from-yellow-300 to-amber-500", illustrationTitle: "A Lição de Hoje"
+                    }
+                ],
+                questions: [
+                    { q: "Quantas vezes por dia Daniel orava?", options: ["Uma vez", "Cinco vezes", "Três vezes"], correct: 2 },
+                    { q: "Quem fechou a boca dos leões?", options: ["Um anjo enviado por Deus", "O próprio Daniel", "O rei com uma chave"], correct: 0 },
+                    { q: "Por que Deus protegeu Daniel na cova?", options: ["Porque os leões não estavam com fome", "Porque ele foi fiel e não deixou de orar", "Porque ele era amigo do rei"], correct: 1 }
+                ]
+            },
+            {
+                id: 3, title: "A Arca de Noé", theme: "Obediência", icon: Ship,
+                pages: [
+                    {
+                        text: "Há muito tempo, as pessoas na Terra esqueceram de Deus e faziam muitas coisas ruins. Mas havia um homem bom chamado Noé. Deus falou com Noé e pediu que ele construísse um barco gigante, chamado Arca, porque uma grande chuva viria.",
+                        imageUrl: "https://i.postimg.cc/FswHpMLV/cena_01_3.webp", imageIcon: Ship, bgGradient: "from-amber-600 to-brown-800", illustrationTitle: "Construindo a Arca"
+                    },
+                    {
+                        text: "Mesmo sem nunca ter visto chuva antes, Noé obedeceu. Ele trabalhou duro por anos. Depois, Deus mandou que casais de todos os tipos de animais entrassem na Arca. Leões, girafas, passarinhos... todos entraram em segurança com a família de Noé.",
+                        imageUrl: "https://i.postimg.cc/vHCZhJVr/cena_02_3.webp", imageIcon: CloudRain, bgGradient: "from-slate-400 to-blue-600", illustrationTitle: "A Grande Chuva"
+                    },
+                    {
+                        text: "Choveu por 40 dias e 40 noites! A água cobriu tudo, mas a Arca flutuou em segurança. Quando a água secou, eles saíram e Deus colocou um lindo arco-íris no céu, como promessa de que nunca mais destruiria a Terra com água.",
+                        imageUrl: "https://i.postimg.cc/7YjZ9F2N/cena_03_3.webp", imageIcon: Sun, bgGradient: "from-pink-300 via-purple-300 to-indigo-400", illustrationTitle: "A Promessa Colorida"
+                    },
+                    {
+                        text: "O QUE APRENDEMOS? A obediência nos salva! Mesmo quando ninguém mais estava fazendo o que era certo, Noé escolheu ouvir a voz de Deus. Deus sempre cuida da nossa família quando escolhemos obedecer à Sua palavra.",
+                        imageIcon: Lightbulb, bgGradient: "from-yellow-300 to-amber-500", illustrationTitle: "A Lição de Hoje"
+                    }
+                ],
+                questions: [
+                    { q: "O que Deus pediu para Noé construir?", options: ["Um castelo de areia", "Uma Arca (um grande barco)", "Uma torre alta"], correct: 1 },
+                    { q: "Qual foi o sinal da promessa de Deus no céu no final?", options: ["Um arco-íris colorido", "Uma nuvem escura", "Um raio de sol"], correct: 0 },
+                    { q: "O que Noé fez quando Deus deu uma missão difícil para ele?", options: ["Reclamou que estava cansado", "Pediu para o vizinho ajudar", "Obedeceu sem questionar"], correct: 2 }
+                ]
+            },
+            {
+                id: 4, title: "Jonas e o Grande Peixe", theme: "Segunda Chance", icon: Fish,
+                pages: [
+                    {
+                        text: "Deus deu uma missão a Jonas: ir até a cidade de Nínive e avisar as pessoas para pararem de fazer coisas ruins. Mas Jonas ficou com medo e tentou fugir de Deus. Ele entrou num navio que ia para a direção contrária!",
+                        imageUrl: "https://i.postimg.cc/qR7r4wK3/cena_01_4.webp", imageIcon: Navigation, bgGradient: "from-cyan-400 to-blue-500", illustrationTitle: "A Fuga no Navio"
+                    },
+                    {
+                        text: "No meio do mar, uma tempestade terrível começou. Para salvar o navio, Jonas pediu para ser jogado na água, pois sabia que a tempestade era por causa de sua desobediência. Assim que caiu no mar, a tempestade parou, e um peixe gigante o engoliu!",
+                        imageUrl: "https://i.postimg.cc/265YrGWB/cena_02_4.webp", imageIcon: Fish, bgGradient: "from-blue-800 to-teal-900", illustrationTitle: "O Grande Peixe"
+                    },
+                    {
+                        text: "Jonas ficou na barriga do peixe por três dias. Lá dentro, ele orou, pediu desculpas a Deus e prometeu obedecer. Deus perdoou Jonas e fez o peixe cuspi-lo na praia. Jonas ganhou uma segunda chance e foi cumprir sua missão em Nínive!",
+                        imageUrl: "https://i.postimg.cc/pTdvRCj5/cena_03_4.webp", imageIcon: Heart, bgGradient: "from-emerald-300 to-emerald-600", illustrationTitle: "A Segunda Chance"
+                    },
+                    {
+                        text: "O QUE APRENDEMOS? Não podemos fugir de Deus, pois Ele está em todos os lugares e nos ama demais. E o mais lindo: Ele é o Deus das segundas chances e sempre nos perdoa e nos resgata quando nos arrependemos de verdade.",
+                        imageIcon: Lightbulb, bgGradient: "from-yellow-300 to-amber-500", illustrationTitle: "A Lição de Hoje"
+                    }
+                ],
+                questions: [
+                    { q: "Para onde Deus mandou Jonas ir logo no começo?", options: ["Nínive", "Egito", "Jerusalém"], correct: 0 },
+                    { q: "Onde Jonas ficou por três dias e três noites?", options: ["Na praia", "Na barriga de um grande peixe", "Em uma caverna escondido"], correct: 1 },
+                    { q: "O que a história de Jonas nos ensina sobre os nossos erros?", options: ["Que Deus nos dá uma segunda chance se pedirmos perdão", "Que Deus nunca mais quer falar conosco", "Que devemos fugir e nos esconder"], correct: 0 }
+                ]
+            },
+            {
+                id: 5, title: "O Bom Samaritano", theme: "Amor ao Próximo", icon: Users,
+                pages: [
+                    {
+                        text: "Jesus contou uma história sobre um homem que viajava por uma estrada perigosa. No caminho, assaltantes o machucaram muito e o deixaram caído no chão. Ele precisava muito de ajuda.",
+                        imageUrl: "https://i.postimg.cc/qRFP0T0Q/cena_01_5.webp", imageIcon: Sun, bgGradient: "from-orange-200 to-amber-400", illustrationTitle: "A Estrada Perigosa"
+                    },
+                    {
+                        text: "Passou por ali um líder religioso, mas atravessou para o outro lado da rua e não ajudou. Depois passou outro homem importante, mas também o ignorou. Até que veio um Samaritano (uma pessoa que as pessoas daquela cidade não costumavam gostar).",
+                        imageUrl: "https://i.postimg.cc/xCZwY2Y6/cena_02_5.webp", imageIcon: Users, bgGradient: "from-slate-200 to-slate-400", illustrationTitle: "Pessoas Passando"
+                    },
+                    {
+                        text: "Ao ver o homem machucado, o Samaritano sentiu muita compaixão. Ele limpou as feridas do homem, o colocou em seu jumento, levou para uma pousada e pagou para que cuidassem dele. Jesus ensinou: O nosso próximo é qualquer pessoa que precisa de ajuda.",
+                        imageUrl: "https://i.postimg.cc/cHzpZSZh/cena_03_5.webp", imageIcon: Heart, bgGradient: "from-rose-400 to-red-500", illustrationTitle: "Amor em Ação"
+                    },
+                    {
+                        text: "O QUE APRENDEMOS? O verdadeiro amor se mostra em atitudes, não apenas em palavras. Jesus nos chama para sermos bons samaritanos todos os dias, ajudando e cuidando das pessoas que precisam, sem nenhum preconceito.",
+                        imageIcon: Lightbulb, bgGradient: "from-yellow-300 to-amber-500", illustrationTitle: "A Lição de Hoje"
+                    }
+                ],
+                questions: [
+                    { q: "Quem parou para ajudar o homem machucado na estrada?", options: ["O Samaritano", "O líder religioso", "Os assaltantes"], correct: 0 },
+                    { q: "O que as primeiras pessoas que passaram fizeram?", options: ["Ajudaram com alegria", "Ignoraram o homem e passaram longe", "Chamaram uma ambulância"], correct: 1 },
+                    { q: "Como podemos imitar o Bom Samaritano hoje?", options: ["Rindo de quem está em apuros", "Ajudando com amor qualquer pessoa que precise", "Ajudando apenas os nossos amigos"], correct: 1 }
+                ]
+            },
+            {
+                id: 6, title: "A Multiplicação", theme: "Generosidade", icon: Award,
+                pages: [
+                    {
+                        text: "Uma multidão gigante de mais de cinco mil pessoas seguiu Jesus até um lugar deserto para ouvir seus ensinamentos e ser curada. Ficou tarde e todos estavam com muita fome, mas não havia lugar para comprar comida ali.",
+                        imageUrl: "https://i.postimg.cc/MpDKwv4k/cena_01_6.webp", imageIcon: Users, bgGradient: "from-amber-100 to-orange-200", illustrationTitle: "A Multidão com Fome"
+                    },
+                    {
+                        text: "Os discípulos não sabiam o que fazer. Então, encontraram um menino que tinha um pequeno lanche: apenas cinco pães e dois peixinhos. O menino, com um coração muito generoso, não guardou para si, mas entregou tudo o que tinha para Jesus.",
+                        imageUrl: "https://i.postimg.cc/Jzq48GFf/cena_02_6.webp", imageIcon: Fish, bgGradient: "from-blue-200 to-cyan-400", illustrationTitle: "O Lanche do Menino"
+                    },
+                    {
+                        text: "Jesus pegou os pães, olhou para o céu e agradeceu a Deus. Então, um milagre incrível aconteceu! A comida começou a se multiplicar. Todos os milhares de pessoas comeram até ficarem super satisfeitos, e ainda sobraram 12 cestos cheios!",
+                        imageUrl: "https://i.postimg.cc/QdbxDHPZ/cena_03_6.webp", imageIcon: Sparkles, bgGradient: "from-yellow-200 to-amber-500", illustrationTitle: "O Grande Milagre"
+                    },
+                    {
+                        text: "O QUE APRENDEMOS? Deus pode fazer coisas gigantescas com o pouco que temos! Quando entregamos o que temos (seja nosso lanche, nosso tempo ou nosso amor) nas mãos de Jesus com um coração generoso, Ele multiplica e abençoa a muitos.",
+                        imageIcon: Lightbulb, bgGradient: "from-yellow-300 to-amber-500", illustrationTitle: "A Lição de Hoje"
+                    }
+                ],
+                questions: [
+                    { q: "O que o menino tinha em seu lanche?", options: ["10 pães e 5 maçãs", "5 pães e 2 peixinhos", "Apenas uma garrafa de água"], correct: 1 },
+                    { q: "O que aconteceu quando Jesus orou agradecendo pela comida?", options: ["A comida desapareceu", "A comida multiplicou e alimentou a todos", "Faltou comida para algumas crianças"], correct: 1 },
+                    { q: "O que aprendemos sobre generosidade com esse menino?", options: ["Que o pouco na mão de Jesus vira muito", "Que devemos guardar tudo só para nós", "Que não vale a pena dividir nossas coisas"], correct: 0 }
+                ]
+            },
+            {
+                id: 7, title: "Zaqueu na Árvore", theme: "Transformação", icon: TreePine,
+                pages: [
+                    {
+                        text: "Zaqueu era um cobrador de impostos muito rico, mas que costumava pegar mais dinheiro das pessoas do que era justo. Por isso, ninguém da cidade gostava dele. Um dia, Jesus visitou a cidade de Jericó e uma multidão se juntou para vê-lo.",
+                        imageUrl: "https://i.postimg.cc/0y8PV9Nb/cena_01_7.webp", imageIcon: Map, bgGradient: "from-stone-300 to-stone-500", illustrationTitle: "A Cidade de Jericó"
+                    },
+                    {
+                        text: "Zaqueu queria muito ver Jesus, mas ele era bem baixinho e a multidão não deixava. Sem pensar duas vezes e sem se importar com o que os outros iam achar, ele correu na frente e subiu em uma árvore bem alta (um sicômoro) para conseguir enxergar.",
+                        imageUrl: "https://i.postimg.cc/SxykgmKn/cena_02_7.webp", imageIcon: TreePine, bgGradient: "from-emerald-400 to-green-700", illustrationTitle: "O Homem na Árvore"
+                    },
+                    {
+                        text: "Quando Jesus passou, parou, olhou para cima e disse: 'Zaqueu, desça depressa! Hoje vou jantar na sua casa'. O coração de Zaqueu foi tocado pelo amor de Jesus. Ele devolveu o dinheiro de quem havia roubado e prometeu ajudar os pobres.",
+                        imageUrl: "https://i.postimg.cc/bwzpmqvD/cena_03_7.webp", imageIcon: Heart, bgGradient: "from-orange-300 to-rose-500", illustrationTitle: "O Coração Transformado"
+                    },
+                    {
+                        text: "O QUE APRENDEMOS? O encontro com Jesus muda nosso coração por completo! Quando deixamos Jesus entrar na nossa casa e na nossa vida, nossos erros ficam para trás e nos tornamos pessoas novas, honestas e cheias de bondade.",
+                        imageIcon: Lightbulb, bgGradient: "from-yellow-300 to-amber-500", illustrationTitle: "A Lição de Hoje"
+                    }
+                ],
+                questions: [
+                    { q: "O que Zaqueu fez para conseguir ver Jesus no meio da multidão?", options: ["Foi para casa assistir pela janela", "Subiu em uma árvore bem alta", "Pediu para alguém levantá-lo"], correct: 1 },
+                    { q: "O que Jesus falou para Zaqueu quando o viu na árvore?", options: ["'Saia daí Zaqueu, é perigoso'", "'Desça! Hoje vou jantar na sua casa'", "'Você é um cobrador ruim'"], correct: 1 },
+                    { q: "O que aconteceu com a vida de Zaqueu depois de encontrar Jesus?", options: ["Seu coração foi transformado e ele virou uma pessoa boa", "Ele continuou fazendo as mesmas coisas erradas", "Ele foi embora muito triste"], correct: 0 }
+                ]
+            }
+        ];
+
+        function App() {
+            // --- ESTADOS ---
+            const [unlockedDays, setUnlockedDays] = useState(() => {
+                const saved = localStorage.getItem('filhoFirme_premium_progress_v2');
+                return saved ? parseInt(saved) : 1;
+            });
+            
+            const [currentView, setCurrentView] = useState('map'); // 'map', 'story', 'quiz', 'success'
+            const [activeDayIndex, setActiveDayIndex] = useState(0);
+            
+            // Estado de Paginação da História
+            const [currentStoryPage, setCurrentStoryPage] = useState(0);
+
+            // Estados do Quiz
+            const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
+            const [selectedAnswer, setSelectedAnswer] = useState(null);
+            const [isAnswerCorrect, setIsAnswerCorrect] = useState(null);
+
+            // --- LÓGICA ---
+            const saveProgress = (newDay) => {
+                if (newDay > 7) newDay = 7;
+                setUnlockedDays(newDay);
+                localStorage.setItem('filhoFirme_premium_progress_v2', newDay.toString());
+            };
+
+            const startDay = (index) => {
+                // Impede clique em dias não destravados
+                if (index + 1 > unlockedDays) return; 
+
+                setActiveDayIndex(index);
+                setCurrentStoryPage(0); // Reseta para a primeira página da história
+                setCurrentView('story');
+            };
+
+            const nextPage = () => {
+                const day = DAYS_DATA[activeDayIndex];
+                if (currentStoryPage < day.pages.length - 1) {
+                    setCurrentStoryPage(prev => prev + 1);
+                } else {
+                    startQuiz();
+                }
+            };
+
+            const prevPage = () => {
+                if (currentStoryPage > 0) {
+                    setCurrentStoryPage(prev => prev - 1);
+                } else {
+                    setCurrentView('map');
+                }
+            };
+
+            const startQuiz = () => {
+                setCurrentQuestionIdx(0);
+                setSelectedAnswer(null);
+                setIsAnswerCorrect(null);
+                setCurrentView('quiz');
+            };
+
+            const handleAnswerSelect = (optionIdx) => {
+                if (selectedAnswer !== null) return; 
+
+                const correctIdx = DAYS_DATA[activeDayIndex].questions[currentQuestionIdx].correct;
+                const isCorrect = optionIdx === correctIdx;
+                
+                setSelectedAnswer(optionIdx);
+                setIsAnswerCorrect(isCorrect);
+
+                setTimeout(() => {
+                    if (currentQuestionIdx < DAYS_DATA[activeDayIndex].questions.length - 1) {
+                        setCurrentQuestionIdx(prev => prev + 1);
+                        setSelectedAnswer(null);
+                        setIsAnswerCorrect(null);
+                    } else {
+                        handleDayComplete();
+                    }
+                }, 1800);
+            };
+
+            const handleDayComplete = () => {
+                // Se completou o dia atual e o próximo ainda não tá liberado, destrava o próximo.
+                if (activeDayIndex + 1 === unlockedDays && unlockedDays < 7) {
+                    saveProgress(unlockedDays + 1);
+                }
+                setCurrentView('success');
+            };
+
+            // --- COMPONENTES VISUAIS ---
+
+            const MapView = () => (
+                <div className="animate-fade-in w-full max-w-md mx-auto bg-parchment-50 rounded-2xl shadow-xl overflow-hidden border border-parchment-200">
+                    <div className="bg-biblicalBlue p-8 text-center text-white relative overflow-hidden border-b-4 border-earth-500">
+                        <div className="absolute top-0 right-0 opacity-10 transform translate-x-4 -translate-y-4">
+                            <BookOpen size={120} />
+                        </div>
+                        <h2 className="text-3xl font-black mb-2 relative z-10 font-serif tracking-wide">Bíblia Viva Kids</h2>
+                        <p className="text-blue-200 text-sm font-medium relative z-10 uppercase tracking-widest">O Desafio de 7 Dias</p>
+                    </div>
+
+                    <div className="p-6 relative">
+                        <div className="absolute left-10 top-10 bottom-10 w-1 bg-parchment-200 rounded"></div>
+
+                        <div className="space-y-6 relative z-10">
+                            {DAYS_DATA.map((day, index) => {
+                                const isUnlocked = (index + 1) <= unlockedDays;
+                                const isCompleted = (index + 1) < unlockedDays || (unlockedDays === 7 && activeDayIndex === 6 && currentView === 'success');
+                                const status = isUnlocked ? 'unlocked' : 'locked';
+                                
+                                return (
+                                    <button 
+                                        key={day.id}
+                                        onClick={() => startDay(index)}
+                                        className={`w-full flex items-center p-3 rounded-xl transition-all duration-300 text-left relative group
+                                            ${status === 'unlocked' ? 'bg-white shadow-sm border border-parchment-200 hover:border-earth-500 hover:shadow-md active:scale-95' : ''}
+                                            ${status === 'locked' ? 'opacity-60 cursor-not-allowed bg-transparent' : ''}
+                                        `}
+                                    >
+                                        <div className={`w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg shrink-0 z-10 mr-4 transition-colors
+                                            ${isCompleted ? 'bg-earth-500 text-white shadow-md' : ''}
+                                            ${isUnlocked && !isCompleted ? 'bg-white border-4 border-earth-500 text-earth-600 shadow-lg' : ''}
+                                            ${status === 'locked' ? 'bg-parchment-200 text-parchment-800' : ''}
+                                        `}>
+                                            {isCompleted ? <CheckCircle size={24} /> : day.id}
+                                        </div>
+                                        
+                                        <div className="flex-grow">
+                                            <h3 className={`font-bold font-serif text-lg ${status === 'locked' ? 'text-parchment-800' : 'text-slate-800'}`}>
+                                                Dia {day.id}
+                                            </h3>
+                                            <p className={`text-sm ${status === 'locked' ? 'text-parchment-800' : 'text-earth-600 font-medium'}`}>
+                                                {day.title}
+                                            </p>
+                                        </div>
+
+                                        {isUnlocked && !isCompleted && (
+                                            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-biblicalBlue animate-bounce-slight">
+                                                <Play size={16} className="ml-1" />
+                                            </div>
+                                        )}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            );
+
+            const StoryView = () => {
+                const day = DAYS_DATA[activeDayIndex];
+                const pageData = day.pages[currentStoryPage];
+                const PageIcon = pageData.imageIcon;
+                const isMoralPage = currentStoryPage === day.pages.length - 1;
+
+                return (
+                    <div key={`page-${currentStoryPage}`} className="w-full max-w-md mx-auto bg-parchment-50 rounded-2xl shadow-xl overflow-hidden border border-parchment-200 flex flex-col min-h-[600px]">
+                        
+                        {/* Header da História */}
+                        <div className="p-4 border-b border-parchment-200 flex items-center justify-between bg-white">
+                            <button onClick={prevPage} className="text-slate-400 hover:text-earth-600 transition-colors p-2">
+                                <ChevronLeft size={24} />
+                            </button>
+                            <div className="flex space-x-1">
+                                {day.pages.map((_, idx) => (
+                                    <div key={idx} className={`h-2 rounded-full transition-all duration-300 ${idx === currentStoryPage ? 'w-6 bg-earth-500' : 'w-2 bg-parchment-300'}`}></div>
+                                ))}
+                            </div>
+                            <span className="text-xs font-bold text-parchment-800 bg-parchment-200 px-2 py-1 rounded">Dia {day.id}</span>
+                        </div>
+
+                        {/* Conteúdo da Página */}
+                        <div className="flex-grow flex flex-col p-6 animate-slide-up">
+                            
+                            {/* Ilustração (Imagem Real ou Vetorial) */}
+                            {pageData.imageUrl ? (
+                                <div className="w-full mb-6 rounded-2xl overflow-hidden shadow-md border border-parchment-200">
+                                    <img 
+                                        src={pageData.imageUrl} 
+                                        alt={pageData.illustrationTitle || day.title} 
+                                        className="w-full h-auto block object-contain"
+                                    />
+                                </div>
+                            ) : (
+                                <div className={`w-full h-48 rounded-2xl mb-6 shadow-inner flex flex-col items-center justify-center text-white bg-gradient-to-br ${pageData.bgGradient} relative overflow-hidden`}>
+                                    <div className="absolute inset-0 bg-black opacity-10"></div>
+                                    <PageIcon size={72} className={`mb-2 relative z-10 drop-shadow-md ${isMoralPage ? 'animate-bounce-slight text-yellow-100' : ''}`} />
+                                    <span className="font-serif font-bold tracking-wide relative z-10 drop-shadow-md">{pageData.illustrationTitle}</span>
+                                </div>
+                            )}
+                            
+                            {!isMoralPage && (
+                                <h2 className="text-2xl font-black font-serif text-slate-800 mb-4">{day.title}</h2>
+                            )}
+                            
+                            <div className={`bg-white p-5 rounded-xl border ${isMoralPage ? 'border-amber-300 shadow-md bg-amber-50' : 'border-parchment-200 shadow-sm'} flex-grow`}>
+                                {isMoralPage ? (
+                                    <div className="space-y-2">
+                                        {/* Destaca a primeira frase "O QUE APRENDEMOS?" em negrito */}
+                                        <p className="font-bold text-earth-600 font-serif text-xl mb-2 tracking-wide">
+                                            {pageData.text.split("?")[0] + "?"}
+                                        </p>
+                                        <p className="text-slate-700 leading-relaxed text-lg font-medium">
+                                            {pageData.text.split("?")[1]}
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <p className="text-slate-700 leading-relaxed text-lg font-medium">
+                                        {pageData.text}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Controles Inferiores */}
+                        <div className="p-6 pt-0 mt-auto">
+                            <button 
+                                onClick={nextPage}
+                                className="w-full bg-earth-600 text-white font-bold py-4 px-6 rounded-xl shadow-md hover:bg-earth-500 transition-all active:scale-95 flex items-center justify-center gap-2"
+                            >
+                                {currentStoryPage < day.pages.length - 1 ? (
+                                    <>Próxima Página <ArrowRight size={20} /></>
+                                ) : (
+                                    <>Iniciar o Quiz de Hoje <Sparkles size={20} /></>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                );
+            };
+
+            const QuizView = () => {
+                const day = DAYS_DATA[activeDayIndex];
+                const question = day.questions[currentQuestionIdx];
+
+                return (
+                    <div className="animate-fade-in w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-parchment-200 min-h-[500px] flex flex-col">
+                        <div className="bg-biblicalBlue p-5 flex justify-between items-center text-white border-b-4 border-earth-500">
+                            <span className="font-serif font-bold tracking-wide">Desafio do Conhecimento</span>
+                            <span className="bg-white text-biblicalBlue px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                                {currentQuestionIdx + 1} / {day.questions.length}
+                            </span>
+                        </div>
+
+                        <div className="p-6 flex-grow flex flex-col justify-center bg-parchment-50">
+                            <h3 className="text-xl font-bold font-serif text-slate-800 text-center mb-8 leading-snug">
+                                {question.q}
+                            </h3>
+
+                            <div className="space-y-4">
+                                {question.options.map((opt, idx) => {
+                                    const isSelected = selectedAnswer === idx;
+                                    const isCorrect = idx === question.correct;
+                                    
+                                    let btnClass = "border-parchment-300 bg-white text-slate-700 hover:border-earth-400 hover:shadow-sm";
+                                    
+                                    if (selectedAnswer !== null) {
+                                        if (isCorrect) {
+                                            btnClass = "border-emerald-500 bg-emerald-50 text-emerald-800 shadow-md ring-2 ring-emerald-500 ring-opacity-50";
+                                        } else if (isSelected && !isCorrect) {
+                                            btnClass = "border-rose-400 bg-rose-50 text-rose-700";
+                                        } else {
+                                            btnClass = "border-parchment-200 bg-parchment-50 text-slate-400 opacity-50"; 
+                                        }
+                                    }
+
+                                    return (
+                                        <button
+                                            key={idx}
+                                            onClick={() => handleAnswerSelect(idx)}
+                                            disabled={selectedAnswer !== null}
+                                            className={`w-full p-4 rounded-xl border-2 font-medium text-left transition-all duration-300 flex items-center justify-between shadow-sm ${btnClass} ${selectedAnswer === null ? 'active:scale-95' : ''}`}
+                                        >
+                                            <span className="text-lg">{opt}</span>
+                                            {selectedAnswer !== null && isCorrect && <CheckCircle className="text-emerald-500" size={24} />}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="mt-8 h-12 flex justify-center items-center">
+                                {selectedAnswer !== null && (
+                                    <div className={`animate-slide-up px-6 py-3 rounded-xl font-bold text-sm shadow-sm ${isAnswerCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
+                                        {isAnswerCorrect ? "🎉 Muito bem! Você acertou!" : "Ops! Quase lá, tente lembrar da história."}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            const SuccessView = () => {
+                const isFinalDay = activeDayIndex === 6; // Dia 7 completado
+                
+                return (
+                    <div className="animate-fade-in w-full max-w-md mx-auto bg-parchment-50 rounded-2xl shadow-xl overflow-hidden border border-parchment-200 min-h-[500px] flex flex-col items-center justify-center p-8 text-center relative">
+                        
+                        {isFinalDay ? (
+                            // CONTEÚDO FINAL (DIA 7)
+                            <div className="w-full flex flex-col items-center">
+                                <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                                    <div className="absolute top-10 left-10 text-earth-400 animate-bounce"><Star size={32} fill="currentColor"/></div>
+                                    <div className="absolute top-20 right-10 text-earth-500 animate-bounce" style={{animationDelay: '0.3s'}}><Star size={24} fill="currentColor"/></div>
+                                    <div className="absolute bottom-40 left-20 text-earth-300 animate-bounce" style={{animationDelay: '0.6s'}}><Star size={20} fill="currentColor"/></div>
+                                </div>
+
+                                <div className="w-28 h-28 bg-gradient-to-br from-yellow-300 to-earth-500 rounded-full flex items-center justify-center text-white mb-6 shadow-xl relative z-10 border-4 border-white">
+                                    <Crown size={56} />
+                                </div>
+
+                                <h2 className="text-3xl font-black font-serif text-slate-800 mb-2 relative z-10">Jornada Concluída!</h2>
+                                <p className="text-slate-600 mb-6 relative z-10 font-medium">
+                                    Que incrível! Vocês finalizaram os 7 Dias construindo raízes fortes na fé.
+                                </p>
+
+                                <div className="bg-white border-2 border-earth-200 p-5 rounded-xl w-full mb-8 relative z-10 shadow-sm">
+                                    <p className="text-earth-700 italic font-serif">"Ensina a criança no caminho em que deve andar, e ainda quando for velho, não se desviará dele." <br/><span className="text-sm font-bold block mt-2">- Provérbios 22:6</span></p>
+                                </div>
+
+                                {/* CTA FINAL PARA NOVO PRODUTO */}
+                                <div className="w-full relative z-10 border-t border-parchment-300 pt-6 mt-2">
+                                    <h3 className="text-lg font-bold text-slate-800 mb-3">Pronto para o próximo passo?</h3>
+                                    <a 
+                                        href="#link-novo-produto" 
+                                        className="w-full bg-biblicalBlue text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:bg-blue-900 transition-all active:scale-95 flex items-center justify-center gap-2"
+                                    >
+                                        Descobrir Nova Aventura <ArrowRight size={20} />
+                                    </a>
+                                    <button onClick={() => setCurrentView('map')} className="mt-4 text-sm text-slate-500 underline hover:text-slate-700">
+                                        Voltar ao Mapa Principal
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            // CONTEÚDO PADRÃO (DIAS 1 A 6)
+                            <div className="w-full flex flex-col items-center">
+                                <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-500 mb-6 shadow-inner relative z-10">
+                                    <Award size={48} />
+                                </div>
+
+                                <h2 className="text-3xl font-black font-serif text-slate-800 mb-2 relative z-10">Parabéns!</h2>
+                                <p className="text-slate-600 mb-8 relative z-10 text-lg">
+                                    Você completou o <strong>Dia {DAYS_DATA[activeDayIndex].id}</strong> e a fé aumentou!
+                                </p>
+
+                                <button 
+                                    onClick={() => setCurrentView('map')}
+                                    className="w-full bg-earth-600 text-white font-bold py-4 px-6 rounded-xl shadow-md hover:bg-earth-500 transition-all active:scale-95 flex items-center justify-center gap-2 relative z-10"
+                                >
+                                    Voltar para o Mapa
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                );
+            };
+
+            return (
+                <div className="w-full max-w-md">
+                    {currentView === 'map' && <MapView />}
+                    {currentView === 'story' && <StoryView />}
+                    {currentView === 'quiz' && <QuizView />}
+                    {currentView === 'success' && <SuccessView />}
+                </div>
+            );
+        }
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
