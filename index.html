@@ -79,7 +79,7 @@
             Cross, Crown, Map, Lightbulb
         } from 'lucide-react';
 
-        // --- DADOS DAS HISTÓRIAS (Agora com 4 páginas, 3 perguntas e IMAGENS REAIS) ---
+        // --- DADOS DAS HISTÓRIAS (Com 4 páginas, 3 perguntas e IMAGENS REAIS) ---
         const DAYS_DATA = [
             {
                 id: 1, title: "Davi e o Gigante", theme: "Coragem", icon: Shield,
@@ -272,7 +272,7 @@
                 return saved ? parseInt(saved) : 1;
             });
             
-            const [currentView, setCurrentView] = useState('map'); // 'map', 'story', 'quiz', 'success'
+            const [currentView, setCurrentView] = useState('start'); // 'start', 'map', 'story', 'quiz', 'success'
             const [activeDayIndex, setActiveDayIndex] = useState(0);
             
             // Estado de Paginação da História
@@ -352,6 +352,32 @@
             };
 
             // --- COMPONENTES VISUAIS ---
+
+            const StartView = () => (
+                <div className="animate-fade-in w-full max-w-md mx-auto bg-parchment-50 rounded-2xl shadow-xl overflow-hidden border border-parchment-200 min-h-[600px] flex flex-col items-center justify-center p-8 text-center relative">
+                    <div className="absolute top-0 left-0 w-full h-40 bg-biblicalBlue rounded-b-[40%] shadow-inner"></div>
+                    
+                    <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center text-biblicalBlue mb-6 shadow-xl border-4 border-earth-500 relative z-10 animate-bounce-slight">
+                        <BookOpen size={64} />
+                    </div>
+
+                    <h1 className="text-4xl font-black font-serif text-slate-800 mb-2 relative z-10 leading-tight">Bíblia Viva<br/><span className="text-earth-600">Kids</span></h1>
+                    <p className="text-biblicalBlue font-bold tracking-widest uppercase text-sm mb-8 relative z-10">
+                        O Desafio de 7 Dias
+                    </p>
+
+                    <div className="bg-white border-2 border-parchment-200 p-5 rounded-xl w-full mb-10 relative z-10 shadow-sm text-slate-600 font-medium leading-relaxed">
+                        Prepare-se para uma jornada incrível! Em apenas 15 minutos por dia, você e seu filho viverão as maiores aventuras da Bíblia.
+                    </div>
+
+                    <button 
+                        onClick={() => setCurrentView('map')}
+                        className="w-full bg-earth-600 text-white font-bold py-4 px-6 rounded-xl shadow-[0_0_15px_rgba(217,119,6,0.4)] hover:bg-earth-500 hover:shadow-[0_0_20px_rgba(217,119,6,0.6)] transition-all active:scale-95 flex items-center justify-center gap-3 relative z-10 text-xl"
+                    >
+                        {unlockedDays > 1 ? "Continuar Aventura" : "Começar Aventura"} <Play size={24} className="fill-current" />
+                    </button>
+                </div>
+            );
 
             const MapView = () => (
                 <div className="animate-fade-in w-full max-w-md mx-auto bg-parchment-50 rounded-2xl shadow-xl overflow-hidden border border-parchment-200">
@@ -460,7 +486,6 @@
                             <div className={`bg-white p-5 rounded-xl border ${isMoralPage ? 'border-amber-300 shadow-md bg-amber-50' : 'border-parchment-200 shadow-sm'} flex-grow`}>
                                 {isMoralPage ? (
                                     <div className="space-y-2">
-                                        {/* Destaca a primeira frase "O QUE APRENDEMOS?" em negrito */}
                                         <p className="font-bold text-earth-600 font-serif text-xl mb-2 tracking-wide">
                                             {pageData.text.split("?")[0] + "?"}
                                         </p>
@@ -622,6 +647,7 @@
 
             return (
                 <div className="w-full max-w-md">
+                    {currentView === 'start' && <StartView />}
                     {currentView === 'map' && <MapView />}
                     {currentView === 'story' && <StoryView />}
                     {currentView === 'quiz' && <QuizView />}
