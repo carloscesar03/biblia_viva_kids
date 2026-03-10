@@ -89,6 +89,83 @@
             Download, X, Share, PlusSquare, CornerRightDown
         } from 'lucide-react';
 
+        // --- SISTEMA DE SOM NATIVO (Zero atraso, zero download) ---
+        let audioCtx = null;
+        const playSound = (type) => {
+            try {
+                if (!audioCtx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContext) audioCtx = new AudioContext();
+                }
+                if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+                if (!audioCtx) return;
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                const now = audioCtx.currentTime;
+
+                if (type === 'swish') {
+                    // Som de "Swoosh" orgânico (deslize macio de página)
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(150, now); // Frequência grave
+                    osc.frequency.linearRampToValueAtTime(300, now + 0.12); // Fica levemente aguda
+                    
+                    // Envelope de volume que imita um sopro/deslize (cresce e some)
+                    gain.gain.setValueAtTime(0, now);
+                    gain.gain.linearRampToValueAtTime(0.2, now + 0.04);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.12);
+                    
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } else if (type === 'plim') {
+                    // Som mágico e alegre (estrelinhas)
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(987.77, now); // B5
+                    osc.frequency.setValueAtTime(1318.51, now + 0.1); // E6
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.linearRampToValueAtTime(0.1, now + 0.2);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
+                } else if (type === 'boing') {
+                    // Som de "Uh-oh" (Duas notas suaves caindo, sem zumbido)
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(349.23, now); // F4
+                    osc.frequency.setValueAtTime(349.23, now + 0.15);
+                    osc.frequency.linearRampToValueAtTime(261.63, now + 0.16); // Cai para C4
+                    
+                    // Modulando o volume para criar a ilusão de duas batidas
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.14);
+                    gain.gain.setValueAtTime(0.15, now + 0.16);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                    
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                } else if (type === 'tada') {
+                    // Fanfarra de vitória (Tã-dã!)
+                    osc.type = 'triangle';
+                    
+                    // Tã (curto)
+                    osc.frequency.setValueAtTime(392.00, now); // G4
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                    
+                    // Dã (Longo e mais alto)
+                    osc.frequency.setValueAtTime(523.25, now + 0.15); // C5
+                    gain.gain.setValueAtTime(0.15, now + 0.15);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+                    
+                    osc.start(now);
+                    osc.stop(now + 1.2);
+                }
+            } catch(e) {
+                console.log("Áudio não suportado", e);
+            }
+        };
+
         // --- DADOS DAS HISTÓRIAS (Agora com Perguntas para os Pais) ---
         const DAYS_DATA = [
             {
@@ -348,13 +425,14 @@
 
             const startDay = (index) => {
                 if (index + 1 > unlockedDays) return; 
-
+                playSound('swish');
                 setActiveDayIndex(index);
                 setCurrentStoryPage(0); 
                 setCurrentView('story');
             };
 
             const nextPage = () => {
+                playSound('swish');
                 const day = DAYS_DATA[activeDayIndex];
                 if (currentStoryPage < day.pages.length - 1) {
                     setCurrentStoryPage(prev => prev + 1);
@@ -364,6 +442,7 @@
             };
 
             const prevPage = () => {
+                playSound('swish');
                 if (currentStoryPage > 0) {
                     setCurrentStoryPage(prev => prev - 1);
                 } else {
@@ -384,6 +463,8 @@
                 const correctIdx = DAYS_DATA[activeDayIndex].questions[currentQuestionIdx].correct;
                 const isCorrect = optionIdx === correctIdx;
                 
+                playSound(isCorrect ? 'plim' : 'boing');
+                
                 setSelectedAnswer(optionIdx);
                 setIsAnswerCorrect(isCorrect);
 
@@ -402,6 +483,7 @@
                 if (activeDayIndex + 1 === unlockedDays && unlockedDays < 7) {
                     saveProgress(unlockedDays + 1);
                 }
+                playSound('tada');
                 setCurrentView('success');
             };
 
@@ -435,7 +517,7 @@
                     </div>
 
                     <button 
-                        onClick={() => setCurrentView('map')}
+                        onClick={() => { playSound('swish'); setCurrentView('map'); }}
                         className="w-full bg-earth-500 text-white font-black py-4 px-6 rounded-2xl shadow-lg border-b-4 border-earth-700 hover:bg-earth-400 hover:border-earth-600 hover:-translate-y-1 transition-all active:border-b-0 active:translate-y-1 flex items-center justify-center gap-3 relative z-10 text-xl group"
                     >
                         {unlockedDays > 1 ? "Continuar Aventura" : "Começar Aventura"} 
@@ -445,7 +527,7 @@
                     {/* Exibe o botão de instalação apenas se não estiver rodando como PWA */}
                     {!isStandalone && (
                         <button 
-                            onClick={() => setShowInstallPopup(true)}
+                            onClick={() => { playSound('swish'); setShowInstallPopup(true); }}
                             className="mt-6 w-full bg-white border-2 border-parchment-200 text-slate-600 font-bold py-3 px-6 rounded-xl shadow-sm hover:bg-parchment-100 transition-all active:scale-95 flex items-center justify-center gap-2 relative z-10"
                         >
                             <Download size={20} /> Instale no seu celular e acesse de qualquer lugar
@@ -519,7 +601,7 @@
                     {/* Botão Flutuante do Guia dos Pais */}
                     <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-parchment-100 via-parchment-50/90 to-transparent">
                         <button 
-                            onClick={() => setCurrentView('parentsGuide')}
+                            onClick={() => { playSound('swish'); setCurrentView('parentsGuide'); }}
                             className="w-full bg-white border-2 border-biblicalBlue text-biblicalBlue font-bold py-3 px-4 rounded-xl shadow-md hover:bg-blue-50 transition-all active:scale-95 flex items-center justify-center gap-2"
                         >
                             <MessageCircle size={20} />
@@ -533,7 +615,7 @@
             const ParentsGuideView = () => (
                 <div className="animate-slide-up w-full max-w-md mx-auto bg-parchment-50 rounded-2xl shadow-xl overflow-hidden border border-parchment-200 flex flex-col min-h-[600px] h-full">
                     <div className="p-4 border-b border-parchment-200 flex items-center bg-white sticky top-0 z-20">
-                        <button onClick={() => setCurrentView('map')} className="text-slate-400 hover:text-biblicalBlue transition-colors p-2">
+                        <button onClick={() => { playSound('swish'); setCurrentView('map'); }} className="text-slate-400 hover:text-biblicalBlue transition-colors p-2">
                             <ChevronLeft size={28} />
                         </button>
                         <span className="font-bold text-biblicalBlue text-lg ml-2 font-serif">Guia para os Pais</span>
@@ -757,7 +839,12 @@
                                                 maxLength={25}
                                             />
                                             <button 
-                                                onClick={() => { if(childName.trim().length > 1) setShowCertificate(true) }}
+                                                onClick={() => { 
+                                                    if(childName.trim().length > 1) {
+                                                        playSound('tada');
+                                                        setShowCertificate(true);
+                                                    } 
+                                                }}
                                                 className={`w-full font-black py-4 px-6 rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 ${childName.trim().length > 1 ? 'bg-earth-600 hover:bg-earth-500 text-white' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
                                             >
                                                 <FileText size={20} /> Gerar Certificado
@@ -799,7 +886,7 @@
                                             📸 Tire um print desta tela e guarde!
                                         </p>
 
-                                        <button onClick={() => setCurrentView('map')} className="mt-8 text-sm text-slate-500 underline hover:text-slate-700 font-medium">
+                                        <button onClick={() => { playSound('swish'); setCurrentView('map'); }} className="mt-8 text-sm text-slate-500 underline hover:text-slate-700 font-medium">
                                             Voltar ao Mapa Principal
                                         </button>
                                     </div>
@@ -828,7 +915,7 @@
                                 </div>
 
                                 <button 
-                                    onClick={() => setCurrentView('map')}
+                                    onClick={() => { playSound('swish'); setCurrentView('map'); }}
                                     className="w-full bg-earth-600 text-white font-bold py-4 px-6 rounded-xl shadow-md hover:bg-earth-500 transition-all active:scale-95 flex items-center justify-center gap-2 relative z-10"
                                 >
                                     Voltar para o Mapa
@@ -853,7 +940,7 @@
                         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
                             <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 relative shadow-2xl animate-slide-up">
                                 <button
-                                    onClick={() => setShowInstallPopup(false)}
+                                    onClick={() => { playSound('swish'); setShowInstallPopup(false); }}
                                     className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 bg-slate-100 rounded-full p-1 transition-colors"
                                 >
                                     <X size={24} />
